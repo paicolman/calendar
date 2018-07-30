@@ -1,0 +1,8 @@
+{
+  "name": "calendar",
+  "app_id": "aae27dbd",
+  "type": "ionic-angular",
+  "integrations": {
+    "cordova": {}
+  }
+}

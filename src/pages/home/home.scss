@@ -1,0 +1,196 @@
+page-home {
+  .calendar {
+    -webkit-transform: translate3d(0, 0, 0);
+    -moz-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    width: 100%;
+    margin: 0 auto;
+    display: block;
+    overflow: hidden;
+  }
+  .calendar .circle {
+    width: 24px;
+    height: 24px;
+    background-color: #428bca;
+    display: inline-block;
+    border-radius: 50%;
+  }
+  .calendar .header {
+    height: 50px;
+    width: 100%;
+    background-color: #428bca;
+    color: #fff;
+    text-align: center;
+    position: relative;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    padding-top: 10px;
+    height: 100px;
+  }
+  .calendar .header .month {
+    opacity: 1;
+    text-align: center;
+    padding: 0px 40px;
+    font-size: 2.5em;
+    margin-bottom: 0px;
+    font-weight: normal;
+  }
+  .calendar .header .year {
+    text-align: center;
+    padding: 0px 40px;
+    font-size: 1.5em;
+  }
+  .calendar .header h1 {
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    line-height: 50px;
+    font-weight: 100;
+    letter-spacing: 1px;
+  }
+  .calendar .legend {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: #fff;
+    border: 1px solid #E9E9E9;
+    line-height: 30px;
+  }
+  .ring-left {
+    left: 2em;
+    position: absolute;
+    margin-top: -8px;
+  }
+  .ring-right {
+    right: 2em;
+    position: absolute;
+    margin-top: -8px;
+  }
+  .ring-left:after,
+  .ring-right:after,
+  .ring-left:before,
+  .ring-right:before {
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 2px 1px rgba(0, 0, 0, 0.25), 0 -1px 1px rgba(0, 0, 0, 0.2);
+    content: "";
+    display: inline-block;
+    margin: 8px;
+    height: 32px;
+    width: 8px;
+  }
+  .left,
+  .right {
+    position: absolute;
+    width: 0px;
+    height: 0px;
+    border-style: solid;
+    top: 50%;
+    margin-top: -7.5px;
+    cursor: pointer;
+  }
+  .left {
+    border-width: 7.5px 10px 7.5px 0;
+    border-color: transparent #FFF transparent transparent;
+    left: 20px;
+  }
+  .right {
+    border-width: 7.5px 0 7.5px 10px;
+    border-color: transparent transparent transparent #FFF;
+    right: 20px;
+  }
+  .month {
+    /*overflow: hidden;*/
+    opacity: 0;
+    margin-bottom: 40px;
+    transition: all 0.7s ease;
+  }
+  .week-days {
+    padding: 8px 0px;
+    background-color: #efefef;
+    border-top: 4px solid #2066A3;
+  }
+  .week-days .day {
+    cursor: default;
+  }
+  .week {
+    background-color: #fff;
+    /* background: #4A4A4A; */
+  }
+  .day {
+    display: inline-block;
+    width: -webkit-calc(14.28571429%);
+    padding: 10px;
+    text-align: center;
+    vertical-align: top;
+    cursor: pointer;
+    /* background: #4A4A4A; */
+    position: relative;
+    z-index: 100;
+  }
+  .calendar .circle {
+    width: 24px;
+    height: 24px;
+    background-color: #428bca;
+    display: inline-block;
+    border-radius: 50%;
+  }
+  .day-number {
+    font-size: 1em;
+    letter-spacing: 1.5px;
+  }
+  .month {
+    /*overflow: hidden;*/
+    opacity: 0;
+    margin-bottom: 40px;
+    transition: all 0.7s ease;
+  }
+  .month.new {
+    -webkit-animation: fadeIn 1s ease-out;
+    opacity: 1;
+  }
+  .month.in.next {
+    -webkit-animation: moveFromLeftFadeMonth 0.4s ease-out;
+    -moz-animation: moveFromLeftFadeMonth 0.4s ease-out;
+    animation: moveFromLeftFadeMonth 0.4s ease-out;
+    opacity: 1;
+  }
+  .month.in.prev {
+    -webkit-animation: moveFromRightFadeMonth 0.4s ease-out;
+    -moz-animation: moveFromRightFadeMonth 0.4s ease-out;
+    animation: moveFromRightFadeMonth 0.4s ease-out;
+    opacity: 1;
+  }
+  .month.out.next {
+    -webkit-animation: moveToRightFadeMonth 0.4s ease-in;
+    -moz-animation: moveToRightFadeMonth 0.4s ease-in;
+    animation: moveToRightFadeMonth 0.4s ease-in;
+    opacity: 1;
+  }
+  .month.out.prev {
+    -webkit-animation: moveToLeftFadeMonth 0.4s ease-in;
+    -moz-animation: moveToLeftFadeMonth 0.4s ease-in;
+    animation: moveToLeftFadeMonth 0.4s ease-in;
+    opacity: 1;
+  }
+  @keyframes slideleft {
+    from { left: 200px; }
+    to{ left: 0px;}
+  }
+  @keyframes slideright {
+    from { left: -200px; }
+    to{ left: 0px;}
+  }
+
+  .slideleft {
+    animation-name: slideleft;
+    animation-duration: 0.4s;
+  }
+  .slideright {
+    animation-name: slideright;
+    animation-duration: 0.4s;
+  }
+  .slidenone{
+    left: 0px;
+  }
+}
