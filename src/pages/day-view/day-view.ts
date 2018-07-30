@@ -54,7 +54,7 @@ export class DayViewPage {
         this.hasFoto = false;
       }
       else{
-        console.log('Pic found for today man!!');
+        console.log('Pic found for today!!');
         this.photoUrl = url;
         this.hasFoto = true;
       }
