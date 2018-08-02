@@ -30,4 +30,5 @@
     <button ion-button (click)="getPhoto()">Replace</button>
     <button ion-button (click)="deleteAll()">Clear all</button>
   </div>
+  <input id="pickImage" type="file" style="display: none" (change)="pickImageInBrowser($event)" >
 </ion-content>

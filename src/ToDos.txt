@@ -1,0 +1,7 @@
+Check size of pictures and reduce automatically if bigger than X
+Check type of file and allow only jpg, png or similar
+Move firebase stuff into a new provider
+Use database entries for the file names, specially endings (png, etc)
+What to do for offline?
+Authentication
+Error handling

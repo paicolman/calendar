@@ -1,9 +1,12 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, Events } from 'ionic-angular';
 import { ActionSheetController } from 'ionic-angular';
-import { ImagePicker } from '@ionic-native/image-picker';
-import { StorePicsProvider } from '../../providers/store-pics/store-pics';
+//import { StorePicsProvider } from '../../providers/store-pics/store-pics';
+import { PickPicsProvider } from '../../providers/pick-pics/pick-pics';
 import { PhotoViewer } from '@ionic-native/photo-viewer';
+import { LoadingController } from 'ionic-angular';
+import { AngularFireStorage } from 'angularfire2/storage';
+import { Observable } from 'rxjs';
 
 /**
  * Generated class for the DayViewPage page.
@@ -12,23 +15,14 @@ import { PhotoViewer } from '@ionic-native/photo-viewer';
  * Ionic pages and navigation.
  */
 
+//https://firebasestorage.googleapis.com/v0/b/fir-test-c122a.appspot.com/o/sample%2FFri_Jul_06_2018.png
+
 @IonicPage()
 @Component({
   selector: 'page-day-view',
   templateUrl: 'day-view.html',
 })
 export class DayViewPage {
-
-  constructor(public navCtrl: NavController, public navParams: NavParams, public events: Events, public actionSheetCtrl: ActionSheetController,
-              private imagePicker: ImagePicker, private storePicsProvider:StorePicsProvider, private photoViewer: PhotoViewer) {
-    this.dayToDisplay = navParams.get("dayToDisplay");
-  }
-
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad DayViewPage');
-    this.updateDayView();
-  }
-
   public dayToDisplay:any;
 
   monthLabels = [" January "," February "," March "," April "," May "," June "," July "," August "," September "," October "," November "," December "];
@@ -39,6 +33,18 @@ export class DayViewPage {
   photoLibMsg = "messages:";
   hasFoto = false;
 
+  constructor(public navCtrl: NavController, public navParams: NavParams, public events: Events, public actionSheetCtrl: ActionSheetController,
+              private pickPics:PickPicsProvider, private photoViewer: PhotoViewer,public loadingCtrl: LoadingController,private afStorage: AngularFireStorage) {
+    this.dayToDisplay = navParams.get("dayToDisplay");
+  }
+
+  ionViewDidLoad() {
+    console.log('ionViewDidLoad DayViewPage');
+    this.updateDayView();
+  }
+
+
+
   updateDayView(){
     let year = this.dayToDisplay.getFullYear();
     let month = this.monthLabels[this.dayToDisplay.getMonth()];
@@ -47,18 +53,52 @@ export class DayViewPage {
 
     //Get picture for today, if exists...
     console.log("Getting image for:"+this.dayLabel);
-    this.storePicsProvider.get(this.dayLabel).then((url) => {
-      if(url == null){
-        console.log('no Pics for this day');
-        this.photoUrl = "assets/imgs/noItems.png";
-        this.hasFoto = false;
-      }
-      else{
-        console.log('Pic found for today!!');
-        this.photoUrl = url;
-        this.hasFoto = true;
-      }
+    //OJO: This should go to a firebase provider later...
+    let imgName = "sample/"+this.dayToDisplay.toDateString().replace(/ /g,"_")+".png"; //OJO: How to find out the name: better use firebase DB
+    const ref = this.afStorage.ref(imgName);
+    let url = null;
+    let loading = this.loadingCtrl.create({
+      content: 'Loading image...'
     });
+    loading.present();
+    ref.getDownloadURL().toPromise().then((url) => {
+      console.log('Pic found for today!!');
+      this.photoUrl = url;
+      this.hasFoto = true;
+      loading.dismiss();
+    }).catch((err) => {
+      console.log("THIS IS THE ERROR:")
+      console.log(err);
+      console.log('no Pics for this day');
+      this.photoUrl = "assets/imgs/noItems.png";
+      this.hasFoto = false;
+      loading.dismiss();
+    });
+    //Old version: storing URL locally...
+    // this.storePicsProvider.get(this.dayLabel).then((url) => {
+    //   if(url == null){
+    //     console.log('no Pics for this day');
+    //     this.photoUrl = "assets/imgs/noItems.png";
+    //     this.hasFoto = false;
+    //   }
+    //   else{
+    //     console.log('Pic found for today!!');
+    //     this.photoUrl = url;
+    //     this.hasFoto = true;
+    //   }
+    // });
+  }
+
+  pickImageInBrowser(event){
+    let imgName = this.dayToDisplay.toDateString().replace(/ /g,"_");
+    let loading = this.loadingCtrl.create({
+      content: 'Uploading image...'
+    });
+    loading.present();
+    this.pickPics.pickImageInBrowser(event, imgName).then((result) => {
+      loading.dismiss();
+    });
+    
   }
 
   getOrShow(){
@@ -77,7 +117,7 @@ export class DayViewPage {
         {
           text: 'Photo Library',
           handler: () => {
-            this.getPhoto();
+            this.pickPics.getPhoto();
           }
         },{
           text: 'Camera',
@@ -96,31 +136,18 @@ export class DayViewPage {
     actionSheet.present();
   }
 
-  getPhoto(){
-    this.imagePicker.getPictures({maximumImagesCount:1}).then((results) => {
-      for (var i = 0; i < results.length; i++) {
-        console.log('Image URI: ' + results[i]);
-        this.photoUrl = results[i];
-        this.storePicsProvider.set(this.dayLabel, this.photoUrl).then((res) => {
-          console.log("Stored image in DB");
-          this.updateDayView();
-        });
-      }
-    }, (err) => { });
-  }
-
-  deletePhoto(){
-    this.storePicsProvider.remove(this.dayLabel).then((key) => {
-      console.log("Pic link deleted at key:"+key);
-      this.updateDayView();
-    });
-  }
-  deleteAll(){
-    this.storePicsProvider.clear().then((res) => {
-      console.log("All links deleted:"+res);
-      this.updateDayView();
-    });
-  }
+  // deletePhoto(){
+  //   this.storePicsProvider.remove(this.dayLabel).then((key) => {
+  //     console.log("Pic link deleted at key:"+key);
+  //     this.updateDayView();
+  //   });
+  // }
+  // deleteAll(){
+  //   this.storePicsProvider.clear().then((res) => {
+  //     console.log("All links deleted:"+res);
+  //     this.updateDayView();
+  //   });
+  // }
 
   changeDay(event){
     console.log(event);
